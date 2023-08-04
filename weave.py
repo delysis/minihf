@@ -18,7 +18,7 @@ import torch
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.generation.streamers import BaseStreamer
-
+from config import default_base_model, default_evaluator_adapter, default_generator_adapter
 
 def logsumexp(xs):
     if not len(xs):
@@ -75,27 +75,7 @@ class ProgressBarStreamer(BaseStreamer):
     def end(self):
         self.next_tokens_are_prompt = True
 
-
-def load_generator():
-    # model_name = "EleutherAI/gpt-neox-20b"
-    model_name = "EleutherAI/gpt-j-6B"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    tokenizer.truncation_side = "left"
-    tokenizer.padding_side = "left"
-    tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        device_map="auto",
-        load_in_4bit=False,
-        load_in_8bit=True,
-        torch_dtype=torch.float16,
-        trust_remote_code=True,
-    )
-    return tokenizer, model
-
-
-def load_evaluator():
-    model_name = "tiiuae/falcon-7b-instruct"
+def load_model(model_name = default_base_model, lora_name = ''):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.truncation_side = "left"
     tokenizer.padding_side = "left"
@@ -108,8 +88,13 @@ def load_evaluator():
         torch_dtype=torch.float16,
         trust_remote_code=True,
     )
+    if lora_name:
+        model = peft.PeftModel.from_pretrained(model, lora_name)
     return tokenizer, model
 
+def load_generator(base_model = default_base_model, adapter = default_generator_adapter): load_model(base_model, adapter)
+
+def load_evaluator(base_model = default_base_model, adapter = default_evaluator_adapter): load_model(base_model, adapter)
 
 def get_scores_from_logits(logits, pos_tokens, neg_tokens, alpha=float("-inf")):
     logits = logits[:, -1, :].float()

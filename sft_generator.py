@@ -18,6 +18,7 @@ from torch.utils import data
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from datasets import load_dataset
 from tqdm import trange, tqdm
+from config import default_base_model
 
 print = tqdm.external_write_mode()(print)
 
@@ -91,7 +92,7 @@ def main():
         "--gradient-checkpointing", action="store_true", default=True, help="use gradient checkpointing"
     )
     parser.add_argument("--lr", type=float, default=1e-4, help="learning rate")
-    parser.add_argument("--model", type=str, required=True, help="model name")
+    parser.add_argument("--model", type=str, default=default_base_model, help="model name")
     parser.add_argument("--context", type=int, default=2048, help="context window length")
     parser.add_argument("--output", type=Path, required=True, help="path to save adapter")
     parser.add_argument("--rank", type=int, default=8, help="the lora rank")

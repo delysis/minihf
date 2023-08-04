@@ -11,6 +11,7 @@ from torch import nn, optim
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from tqdm import trange, tqdm
 from dataset import ZippedConversationsDataset
+from config import default_base_model
 
 print = tqdm.external_write_mode()(print)
 
@@ -31,7 +32,7 @@ def lora_tune_evaluator(data, continue_from=None):
         )
         model = peft.PeftModel.from_pretrained(model_base, peft_model_name)
     else:
-        model_name = "tiiuae/falcon-7b-instruct"
+        model_name = default_base_model
         print(f"Loading tokenizer: {model_name}", file=sys.stderr)
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         tokenizer.pad_token = tokenizer.eos_token

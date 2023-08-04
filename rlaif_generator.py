@@ -23,6 +23,7 @@ from torch import optim
 from torch.nn import functional as F
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from config import default_base_model, default_evaluator_adapter
 
 print = tqdm.external_write_mode()(print)
 
@@ -219,8 +220,8 @@ def main():
         principle_signs.append(1 if answer == "yes" else -1)
     principle_signs = torch.tensor(principle_signs, device=device)
 
-    model_name = "openlm-research/open_llama_7b"
-    evaluator_adapter_name = "RiversHaveWings/minihf_evaluator_openllama_7b"
+    model_name = default_base_model
+    evaluator_adapter_name = default_evaluator_adapter
     eval_split_batches = True
 
     tokenizer = AutoTokenizer.from_pretrained(evaluator_adapter_name)

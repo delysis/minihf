@@ -20,6 +20,7 @@ from torch.nn import functional as F
 from torch.utils import data
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from tqdm import tqdm
+from config import default_base_model
 
 print = tqdm.external_write_mode()(print)
 
@@ -69,7 +70,7 @@ def main():
     lora_rank = 32
     lr = 1e-4
     max_len = 2048
-    model_name = "openlm-research/open_llama_7b"
+    model_name = default_base_model
 
     # Initialize Accelerate
     accelerator = accelerate.Accelerator(mixed_precision="bf16", dispatch_batches=False)

@@ -18,6 +18,7 @@ from weave import weave_tree_search, generate_outputs, evaluate_outputs
 from weave import make_score_prompt_fn, TreeNode
 from lora_tune import lora_tune_evaluator
 from dataset import ZippedConversationsDataset
+from config import default_evaluator_adapter, default_generator_adapter
 
 @contextmanager
 def set_adapter(model, adapter_name):
@@ -32,9 +33,7 @@ def set_adapter(model, adapter_name):
     finally:
         model.set_adapter(old_adapter_name)
 
-def load_generator_evaluator():
-    evaluator_adapter_name = "RiversHaveWings/minihf_evaluator_openllama_7b"
-    generator_adapter_name = ""
+def load_generator_evaluator(evaluator_adapter_name = default_evaluator_adapter,generator_adapter_name = default_generator_adapter):
     peft_config = peft.PeftConfig.from_pretrained(evaluator_adapter_name)
     model_name = peft_config.base_model_name_or_path
     tokenizer = AutoTokenizer.from_pretrained(evaluator_adapter_name)
