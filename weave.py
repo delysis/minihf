@@ -502,6 +502,8 @@ def main():
         "--api-key", default=os.environ.get("OPENAI_API_KEY", ""), help="OpenAI API key"
     )
     parser.add_argument("--use-openai", action="store_true", help="Use OpenAI API")
+    parser.add_argument("--prompt", default="Once upon a time, there was a woman who")
+    parser.add_argument("--system-prompt", default="")
     args = parser.parse_args()
 
     if args.use_openai and not args.api_key:
@@ -526,8 +528,8 @@ def main():
     # system_prompt = (
     #     "A well-written, sad story that makes the reader feel like crying:\n\n"
     # )
-    system_prompt = ""
-    prompt = "Once upon a time, there was a woman who"
+    system_prompt = args.system_prompt
+    prompt = args.prompt
 
     def evaluate_without_system_prompt(texts):
         stripped_texts = [text[len(system_prompt) :] for text in texts]
